@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Важно для мобильных -->
+    <title>Мои разработки / My Developments</title>
+    
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fdcb6e;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: #ffffff;
+            --text-main: #2d3436;
+            --text-light: #636e72;
+            --footer-bg: #2d3436;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Чтобы прижать футер к низу */
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem; /* Чуть меньше для мобильных по умолчанию */
+            color: var(--primary-color);
+            line-height: 1.3;
+        }
+        
+        @media (min-width: 768px) {
+            h1 { font-size: 2.5rem; }
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .lang-switch {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            background: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* --- FILTERS --- */
+        .filter-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-group {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 200px; /* Адаптивная ширина */
+            max-width: 300px;
+        }
+
+        .filter-label {
+            font-weight: bold;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .reset-btn {
+            background: #ff7675;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+            flex: 0 0 auto;
+        }
+        .reset-btn:hover { transform: scale(1.05); }
+
+        /* --- PRODUCTS GRID --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+            flex: 1; /* Толкает футер вниз */
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Адаптивная сетка */
+            gap: 25px;
+        }
+
+        /* --- CARD --- */
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .badge-free { background-color: var(--secondary-color); }
+        .badge-hot { background-color: var(--accent-color); color: #333; }
+
+        .card-img-wrapper {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .card-img { transform: scale(1.05); }
+
+        .card-body {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-tags {
+            margin-bottom: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tag {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #f1f2f6;
+            color: var(--text-light);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            margin: 0 0 8px 0;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            line-height: 1.4;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Обрезка текста после 3 строк */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f1f1;
+            padding-top: 12px;
+            margin-top: auto;
+        }
+
+        .price-block {
+            display: flex;
+            flex-direction: column;
+        }
+        .price-rub { font-weight: bold; font-size: 1.1rem; color: var(--primary-color); }
+        .price-byn { font-size: 0.8rem; color: var(--text-light); }
+
+        .buy-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        .buy-btn:hover { background-color: #5649c0; }
+        .buy-btn.free-btn { background-color: var(--secondary-color); }
+        .buy-btn.free-btn:hover { background-color: #00a383; }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #aaa;
+            z-index: 10;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .close-modal:hover { color: #333; }
+
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        @media (min-width: 768px) { .carousel-wrapper { height: 400px; } }
+
+        .carousel-slide {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        .carousel-slide.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0.8; } to { opacity: 1; } }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.7);
+            border: none;
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+        }
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
+        .carousel-btn:hover { background: white; }
+
+        .modal-body { padding: 20px; }
+        .modal-title { font-size: 1.5rem; margin-top: 0; color: var(--primary-color); }
+        @media (min-width: 768px) { .modal-title { font-size: 2rem; } }
+        
+        .modal-meta { display: flex; gap: 15px; margin-bottom: 15px; color: var(--text-light); font-size: 0.85rem; flex-wrap: wrap; }
+        .modal-desc { font-size: 1rem; line-height: 1.6; color: #444; margin-bottom: 20px; }
+        
+        .modal-price-large {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .modal-action-btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .modal-action-btn:hover { transform: scale(1.03); background: #5649c0; }
+        .modal-action-btn.free-style { background: var(--secondary-color); }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--footer-bg);
+            color: #b2bec3;
+            padding: 40px 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p, .footer-section a {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #b2bec3;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover { color: white; }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .social-icon {
+            width: 35px; height: 35px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .social-icon:hover { background: var(--primary-color); }
+
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+        }
+
+        /* --- TOAST NOTIFICATION --- */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 250px;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease forwards;
+            font-size: 0.95rem;
+        }
+
+        .toast.info { border-left-color: var(--primary-color); }
+        .toast.success { border-left-color: var(--secondary-color); }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="site-title">Мои разработки<br><span style="font-size: 0.6em; color: #555;">My Developments</span></h1>
+        <div class="subtitle" id="site-subtitle">Китайский, английский для малышей и подростков</div>
+        
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLanguage('ru')">RU</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" onclick="setLanguage('cn')">中文</button>
+        </div>
+    </header>
+
+    <div class="filter-container">
+        <div class="filter-group">
+            <span class="filter-label" data-key="filter_lang">Язык:</span>
+            <select class="filter-select" id="filter-lang" onchange="applyFilters()">
+                <option value="all">Все</option>
+                <option value="chinese">Китайский</option>
+                <option value="english">Английский</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <span class="filter-label" data-key="filter_age">Возраст:</span>
+            <select class="filter-select" id="filter-age" onchange="applyFilters()">
+                <option value="all">Все</option>
+                <option value="kids">Малыши (3-6)</option>
+                <option value="teens">Подростки (7-14)</option>
+                <option value="adults">Взрослые</option>
+            </select>
+        </div>
+
+        <button class="reset-btn" onclick="resetFilters()" data-key="btn_reset">Сбросить</button>
+    </div>
+
+    <div class="container">
+        <div class="products-grid" id="products-container">
+            
+            <!-- ТОВАР 1: Китайский, Малыши (БЕСПЛАТНЫЙ) -->
+            <div class="product-card" 
+                 data-lang="chinese" 
+                 data-age="kids"
+                 data-is-free="true"
+                 data-title-ru="Карточки: Животные Китая"
+                 data-title-en="Flashcards: China Animals"
+                 data-title-cn="闪卡：中国动物"
+                 data-desc-ru="Яркие карточки с пиньинем для изучения названий животных. Идеально для старта."
+                 data-desc-en="Bright cards with Pinyin to learn animal names. Perfect for starters."
+                 data-desc-cn="带有拼音的明亮卡片，用于学习动物名称。非常适合初学者。"
+                 data-price-rub="0"
+                 data-price-byn="0"
+                 data-images="https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=800&q=80, https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?auto=format&fit=crop&w=800&q=80"
+                 data-link="#">
+                
+                <span class="badge badge-free" data-key="badge_free">Бесплатно</span>
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=600&q=80" alt="Animals" class="card-img">
+                </div>
+                <div class="card-body">
+                    <div class="card-tags">
+                        <span class="tag">🇨🇳 Китайский</span>
+                        <span class="tag">👶 Малыши</span>
+                    </div>
+                    <h3 class="card-title ru-text">Карточки: Животные Китая</h3>
+                    <h3 class="card-title en-text" style="display:none;">Flashcards: China Animals</h3>
+                    <h3 class="card-title cn-text" style="display:none;">闪卡：中国动物</h3>
+
+                    <p class="card-desc ru-text">Яркие карточки с пиньинем для изучения названий животных.</p>
+                    <p class="card-desc en-text" style="display:none;">Bright cards with Pinyin to learn animal names.</p>
+                    <p class="card-desc cn-text" style="display:none;">带有拼音的明亮卡片，用于学习动物名称。</p>
+
+                    <div class="card-footer">
+                        <div class="price-block">
+                            <span class="price-rub">0 ₽</span>
+                            <span class="price-byn">0 BYN</span>
+                        </div>
+                        <button class="buy-btn free-btn" onclick="handleAction(this)" data-key="btn_details">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ТОВАР 2: Английский, Подростки (БЕСПЛАТНЫЙ) -->
+            <div class="product-card" 
+                 data-lang="english" 
+                 data-age="teens"
+                 data-is-free="true"
+                 data-title-ru="Грамматика: Времена глаголов"
+                 data-title-en="Grammar: Verb Tenses"
+                 data-title-cn="语法：动词时态"
+                 data-desc-ru="Шпаргалка по всем временам английского с примерами из поп-культуры."
+                 data-desc-en="Cheat sheet for all English tenses with pop-culture examples."
+                 data-desc-cn="所有英语时态的速查表，附有流行文化示例。"
+                 data-price-rub="0"
+                 data-price-byn="0"
+                 data-images="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80, https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80"
+                 data-link="#">
+                
+                <span class="badge badge-free" data-key="badge_free">Бесплатно</span>
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80" alt="English" class="card-img">
+                </div>
+                <div class="card-body">
+                    <div class="card-tags">
+                        <span class="tag">🇬🇧 Английский</span>
+                        <span class="tag">🎓 Подростки</span>
+                    </div>
+                    <h3 class="card-title ru-text">Грамматика: Времена глаголов</h3>
+                    <h3 class="card-title en-text" style="display:none;">Grammar: Verb Tenses</h3>
+                    <h3 class="card-title cn-text" style="d
